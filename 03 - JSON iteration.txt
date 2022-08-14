@@ -1,0 +1,98 @@
+*******JSON iterations (for, forin, forof, forEach)
+ 
+// for:
+it's used to iterate arrays only.
+    syntax:
+    for(intialization; condition;udatation){ statements}
+   
+    eg:
+    arr=[1,2,3,4,5,6,56];
+       for(let i =0; i<arr.length; i++)
+       { console.log(arr[i]) }
+    // output: [1,2,3,4,5,6,56]
+
+
+
+//for in:
+'for in' is used for objects as for loop cannot be used in 
+objects as they are not order list. We use for in  to iterate over objects.
+    syntax:
+    for(const key in object){ statements}
+
+    eg:
+    let obj ={name:"Dev", age: 27};
+    for(const key in obj){console.log(obj[key])}
+    // will give all value of key(obj[key] is syntax for value of key in object) ie : Dev, 27
+
+for in always give key value or index (in case of arrays)
+eg:
+let arr=[1,2,3,4,5,6,56];
+for(const key in arr){console.log(key+" " +arr[key])}
+// output:
+        0 1
+        1 2
+        2 3
+        3 4
+        4 5
+        5 6
+        6 56
+
+
+
+//for of: it's used to iterate over values.
+ 
+ for(let value of obj){console.log(value)};
+ ouput: error as obj for of cannnot be used, since value is not key in obj it has its own key
+ 
+ let arr=[1,2,3,4,5,6,56];
+ for(let value of arr){console.log(value)}
+ //output: 1
+           2
+           3 
+           4
+           5 
+           6
+           56
+
+
+
+// forEach:
+The forEach() method calls a function for each element in an array.
+    syntax:
+    array.forEach(function(currentValue, index, arr), thisValue)
+eg:
+   const fruits = ["apple", "orange", "mangoes"];
+   fruits.forEach(showEach);
+   function showEach(item, index) {
+    console.log(index + ": " + item)
+    }
+    // output:
+            0: apple
+            1: orange
+            2: mangoes
+
+
+
+
+
+
+
+
+*******RESUME IN JSON:
+
+let resume ={firstName: “Divyesh”,
+            lastName: "Bhuva",
+            email : “divyesh@gmail.com”,
+            phone No: "134567890",
+            address :{
+                     city:"surat"
+                     state: "Gujrat"
+                     country: "INDIA"
+                     },
+            education: [{degree: "diploma",
+                        branch: "Electrical",
+                        CGPA: "7.8",
+                        durations: "2012-2015",
+                        }]
+            skills:["Coreldraw","VB","HTML","CSS"]
+            }

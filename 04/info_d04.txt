@@ -1,0 +1,253 @@
+***** how to correctly compare objects in JavaScript..?
+
+1. Referential equality
+2. Manual comparison
+3. Shallow equality
+4. Deep equality
+
+
+1. Referential equality:
+    JavaScript provides 3 ways to compare values:
+        >>> The strict equality operator ===
+        >>> The loose equality operator ==
+        >>> Object.is() function
+
+    When comparing objects using any of the above, the comparison evaluates to true only if 
+    the compared values reference the same object instance. This is the referential equality.
+
+    Referential equality is useful when you'd like to compare object references, rather than
+    their content. But in most of the situations you'd need to compare the actual content of the
+    objects: the properties and their values.
+
+
+2. Manual comparison:
+    The obvious way to compare objects by content is to read the properties and compare them manually.
+i.e.,
+    function isHeroEqual(object1, object2) {
+    return object1.name === object2.name;
+    }
+    const hero1 = {name: 'Batman'};
+    const hero2 = {name: 'Batman'};
+    const hero3 = {name: 'Joker'};
+        isHeroEqual(hero1, hero2); // => true
+        isHeroEqual(hero1, hero3); // => false
+    isHeroEqual() accesses the property name of both objects and compares their values.
+    If the compared objects have a few properties, isEqual(). Such functions have good performance.
+
+    Manual comparison requires manual extraction of properties — for simple objects, that's not a problem.
+    But to compare bigger objects (or objects of unknown structure), the manual comparison isn't convenient
+    because it requires a lot of boilerplate code.
+
+
+3. Shallow equality:
+    During shallow equality check of objects you get the list of properties [(using Object.keys()] of
+    both objects, then check the properties' values for equality.
+
+    If the properties' values of objects to compare are primitive values, the shallow equality check
+    is the way to go. But objects in JavaScript can be nested. In such a case, unfortunately,
+    the shallow equality doesn't work well.
+
+    Fortuntately, the deep equality correctly compares the objects containing other objects.
+
+
+4. Deep equality:
+    The deep equality is similar to the shallow equality, but with one difference. During the
+    shallow check, if the compared properties are objects, a recursive shallow equality check is performed
+    on these nested objects.
+
+    syntex method:
+
+    function deepEqual(object1, object2) {
+        const keys1 = Object.keys(object1);
+        const keys2 = Object.keys(object2);
+        if (keys1.length !== keys2.length) {
+            return false;
+         }
+        for (const key of keys1) {
+            const val1 = object1[key];
+            const val2 = object2[key];
+            const areObjects = isObject(val1) && isObject(val2);
+            if (
+                areObjects && !deepEqual(val1, val2) ||
+                !areObjects && val1 !== val2
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function isObject(object) {
+        return object != null && typeof object === 'object';
+    }
+
+    deepEqual(object1, object2);
+
+
+
+
+
+
+Question: Can I display special or mathematical symbols as part of JavaScript output?
+
+Answer: You can include symbols in JavaScript strings and/or display symbols on your HTML pages using several representations:
+
+hexadecimal codes \xXX in JavaScript strings; e.g. degree (°) is \xB0
+Unicode hex codes \uXXXX in JavaScript strings; e.g. euro sign (€) is \u20AC
+HTML entities; e.g. euro (€) is &euro; and degree (°) is &deg;
+numeric HTML entities; e.g. euro (€) is &#8364; and degree (°) is &#176;
+unescape with a suitable argument; e.g. ° is unescape('%B0')
+decodeURI with a suitable argument; e.g. ° is decodeURI('%C2%B0')
+Example 1:  Most modern browsers correctly display the euro sign (€):
+document.write('\u20AC')               // €
+document.write('&#8364;')              // €
+document.write('&euro;')               // €
+document.write(unescape('%u20AC'))     // €
+document.write(decodeURI('%E2%82%AC')) // €
+Example 2:  Here is a test for the plus-or-minus sign (±):
+document.write('\xB1')                 // ±
+document.write('&#177;')               // ±
+document.write('&plusmn;')             // ±
+document.write(unescape('%B1'))        // ±
+document.write(decodeURI('%C2%B1'))    // ±
+To display a special symbol in a JavaScript alert message or a confirm dialog box, use the hexadecimal code of the symbol, for example:
+
+alert('The euro currency sign is \u20AC'); // Try it!
+The following table lists the HTML entities, character codes, and URL-encodings for mathematical and special symbols. (Symbols that do not have standard HTML entities are not included. You can still use those symbols too, similar to the above examples, as long as you know the correct character codes \xXX or \uXXXX or &#XXX;. See also Greek letters and URL-encoding.)
+
+
+chr 	HexCode  	Numeric  	HTML entity 	escape(chr) 	encodeURI(chr) 	 Description
+"	\x22	&#34;	&quot;	%22	%22	quotation mark
+&	\x26	&#38;	&amp;	%26	&	ampersand
+<	\x3C	&#60;	&lt;	%3C	%3C	less-than sign
+>	\x3E	&#62;	&gt;	%3E	%3E	greater-than sign
+ 	\xA0	&#160;	&nbsp;	%A0	%C2%A0	non-breaking space
+¡	\xA1	&#161;	&iexcl;	%A1	%C2%A1	inverted exclamation mark
+¢	\xA2	&#162;	&cent;	%A2	%C2%A2	cent sign
+£	\xA3	&#163;	&pound;	%A3	%C2%A3	pound sign
+¤	\xA4	&#164;	&curren;	%A4	%C2%A4	currency sign
+¥	\xA5	&#165;	&yen;	%A5	%C2%A5	yen sign = yuan sign
+¦	\xA6	&#166;	&brvbar;	%A6	%C2%A6	broken vertical bar
+§	\xA7	&#167;	&sect;	%A7	%C2%A7	section sign
+¨	\xA8	&#168;	&uml;	%A8	%C2%A8	diaeresis = spacing diaeresis
+©	\xA9	&#169;	&copy;	%A9	%C2%A9	copyright sign
+ª	\xAA	&#170;	&ordf;	%AA	%C2%AA	feminine ordinal indicator
+«	\xAB	&#171;	&laquo;	%AB	%C2%AB	left-pointing double angle quotation mark = left pointing guillemet
+¬	\xAC	&#172;	&not;	%AC	%C2%AC	not sign
+­	\xAD	&#173;	&shy;	%AD	%C2%AD	soft hyphen = discretionary hyphen
+®	\xAE	&#174;	&reg;	%AE	%C2%AE	registered sign = registered trademark sign
+¯	\xAF	&#175;	&macr;	%AF	%C2%AF	macron = spacing macron = overline = APL overbar
+°	\xB0	&#176;	&deg;	%B0	%C2%B0	degree sign
+±	\xB1	&#177;	&plusmn;	%B1	%C2%B1	plus-minus sign = plus-or-minus sign
+²	\xB2	&#178;	&sup2;	%B2	%C2%B2	superscript two = superscript digit two = squared
+³	\xB3	&#179;	&sup3;	%B3	%C2%B3	superscript three = superscript digit three = cubed
+´	\xB4	&#180;	&acute;	%B4	%C2%B4	acute accent = spacing acute
+µ	\xB5	&#181;	&micro;	%B5	%C2%B5	micro sign
+¶	\xB6	&#182;	&para;	%B6	%C2%B6	pilcrow sign = paragraph sign
+·	\xB7	&#183;	&middot;	%B7	%C2%B7	middle dot = Georgian comma = Greek middle dot
+¸	\xB8	&#184;	&cedil;	%B8	%C2%B8	cedilla = spacing cedilla
+¹	\xB9	&#185;	&sup1;	%B9	%C2%B9	superscript one = superscript digit one
+º	\xBA	&#186;	&ordm;	%BA	%C2%BA	masculine ordinal indicator
+»	\xBB	&#187;	&raquo;	%BB	%C2%BB	right-pointing double angle quotation mark = right pointing guillemet
+¼	\xBC	&#188;	&frac14;	%BC	%C2%BC	vulgar fraction one quarter = fraction one quarter
+½	\xBD	&#189;	&frac12;	%BD	%C2%BD	vulgar fraction one half = fraction one half
+¾	\xBE	&#190;	&frac34;	%BE	%C2%BE	vulgar fraction three quarters = fraction three quarters
+¿	\xBF	&#191;	&iquest;	%BF	%C2%BF	inverted question mark = turned question mark
+×	\xD7	&#215;	&times;	%D7	%C3%97	multiplication sign
+÷	\xF7	&#247;	&divide;	%F7	%C3%B7	division sign
+ƒ	\u0192	&#402;	&fnof;	%u0192	%C6%92	latin small f with hook = function = florin
+ˆ	\u02C6	&#710;	&circ;	%u02C6	%CB%86	modifier letter circumflex accent
+˜	\u02DC	&#732;	&tilde;	%u02DC	%CB%9C	small tilde
+ 	\u2002	&#8194;	&ensp;	%u2002	%E2%80%82	en space
+ 	\u2003	&#8195;	&emsp;	%u2003	%E2%80%83	em space
+ 	\u2009	&#8201;	&thinsp;	%u2009	%E2%80%89	thin space
+‌	\u200C	&#8204;	&zwnj;	%u200C	%E2%80%8C	zero width non-joiner
+‍	\u200D	&#8205;	&zwj;	%u200D	%E2%80%8D	zero width joiner
+‎	\u200E	&#8206;	&lrm;	%u200E	%E2%80%8E	left-to-right mark
+‏	\u200F	&#8207;	&rlm;	%u200F	%E2%80%8F	right-to-left mark
+–	\u2013	&#8211;	&ndash;	%u2013	%E2%80%93	en dash
+—	\u2014	&#8212;	&mdash;	%u2014	%E2%80%94	em dash
+‘	\u2018	&#8216;	&lsquo;	%u2018	%E2%80%98	left single quotation mark
+’	\u2019	&#8217;	&rsquo;	%u2019	%E2%80%99	right single quotation mark
+‚	\u201A	&#8218;	&sbquo;	%u201A	%E2%80%9A	single low-9 quotation mark
+“	\u201C	&#8220;	&ldquo;	%u201C	%E2%80%9C	left double quotation mark
+”	\u201D	&#8221;	&rdquo;	%u201D	%E2%80%9D	right double quotation mark
+„	\u201E	&#8222;	&bdquo;	%u201E	%E2%80%9E	double low-9 quotation mark
+†	\u2020	&#8224;	&dagger;	%u2020	%E2%80%A0	dagger
+‡	\u2021	&#8225;	&Dagger;	%u2021	%E2%80%A1	double dagger
+•	\u2022	&#8226;	&bull;	%u2022	%E2%80%A2	bullet = black small circle
+…	\u2026	&#8230;	&hellip;	%u2026	%E2%80%A6	horizontal ellipsis = three dot leader
+‰	\u2030	&#8240;	&permil;	%u2030	%E2%80%B0	per mille sign
+′	\u2032	&#8242;	&prime;	%u2032	%E2%80%B2	prime = minutes = feet
+″	\u2033	&#8243;	&Prime;	%u2033	%E2%80%B3	double prime = seconds = inches
+‹	\u2039	&#8249;	&lsaquo;	%u2039	%E2%80%B9	single left-pointing angle quotation mark
+›	\u203A	&#8250;	&rsaquo;	%u203A	%E2%80%BA	single right-pointing angle quotation mark
+‾	\u203E	&#8254;	&oline;	%u203E	%E2%80%BE	overline = spacing overscore
+⁄	\u2044	&#8260;	&frasl;	%u2044	%E2%81%84	fraction slash
+€	\u20AC	&#8364;	&euro;	%u20AC	%E2%82%AC	euro sign
+ℑ	\u2111	&#8465;	&image;	%u2111	%E2%84%91	blackletter capital I = imaginary part
+ℓ	\u2113	&#8467;		%u2113	%E2%84%93	script small L
+№	\u2116	&#8470;		%u2116	%E2%84%96	numero sign
+℘	\u2118	&#8472;	&weierp;	%u2118	%E2%84%98	script capital P = power set = Weierstrass p
+ℜ	\u211C	&#8476;	&real;	%u211C	%E2%84%9C	blackletter capital R = real part symbol
+™	\u2122	&#8482;	&trade;	%u2122	%E2%84%A2	trademark sign
+ℵ	\u2135	&#8501;	&alefsym;	%u2135	%E2%84%B5	alef symbol = first transfinite cardinal
+←	\u2190	&#8592;	&larr;	%u2190	%E2%86%90	leftwards arrow
+↑	\u2191	&#8593;	&uarr;	%u2191	%E2%86%91	upwards arrow
+→	\u2192	&#8594;	&rarr;	%u2192	%E2%86%92	rightwards arrow
+↓	\u2193	&#8595;	&darr;	%u2193	%E2%86%93	downwards arrow
+↔	\u2194	&#8596;	&harr;	%u2194	%E2%86%94	left right arrow
+↵	\u21B5	&#8629;	&crarr;	%u21B5	%E2%86%B5	downwards arrow with corner leftwards = carriage return
+⇐	\u21D0	&#8656;	&lArr;	%u21D0	%E2%87%90	leftwards double arrow
+⇑	\u21D1	&#8657;	&uArr;	%u21D1	%E2%87%91	upwards double arrow
+⇒	\u21D2	&#8658;	&rArr;	%u21D2	%E2%87%92	rightwards double arrow
+⇓	\u21D3	&#8659;	&dArr;	%u21D3	%E2%87%93	downwards double arrow
+⇔	\u21D4	&#8660;	&hArr;	%u21D4	%E2%87%94	left right double arrow
+∀	\u2200	&#8704;	&forall;	%u2200	%E2%88%80	for all
+∂	\u2202	&#8706;	&part;	%u2202	%E2%88%82	partial differential
+∃	\u2203	&#8707;	&exist;	%u2203	%E2%88%83	there exists
+∅	\u2205	&#8709;	&empty;	%u2205	%E2%88%85	empty set = null set = diameter
+∇	\u2207	&#8711;	&nabla;	%u2207	%E2%88%87	nabla = backward difference
+∈	\u2208	&#8712;	&isin;	%u2208	%E2%88%88	element of
+∉	\u2209	&#8713;	&notin;	%u2209	%E2%88%89	not an element of
+∋	\u220B	&#8715;	&ni;	%u220B	%E2%88%8B	contains as member
+∏	\u220F	&#8719;	&prod;	%u220F	%E2%88%8F	n-ary product = product sign
+∑	\u2211	&#8721;	&sum;	%u2211	%E2%88%91	n-ary sumation
+−	\u2212	&#8722;	&minus;	%u2212	%E2%88%92	minus sign
+∗	\u2217	&#8727;	&lowast;	%u2217	%E2%88%97	asterisk operator
+√	\u221A	&#8730;	&radic;	%u221A	%E2%88%9A	square root = radical sign
+∝	\u221D	&#8733;	&prop;	%u221D	%E2%88%9D	proportional to
+∞	\u221E	&#8734;	&infin;	%u221E	%E2%88%9E	infinity
+∠	\u2220	&#8736;	&ang;	%u2220	%E2%88%A0	angle
+∧	\u2227	&#8743;	&and;	%u2227	%E2%88%A7	logical and = wedge
+∨	\u2228	&#8744;	&or;	%u2228	%E2%88%A8	logical or = vee
+∩	\u2229	&#8745;	&cap;	%u2229	%E2%88%A9	intersection = cap
+∪	\u222A	&#8746;	&cup;	%u222A	%E2%88%AA	union = cup
+∫	\u222B	&#8747;	&int;	%u222B	%E2%88%AB	integral
+∴	\u2234	&#8756;	&there4;	%u2234	%E2%88%B4	therefore
+∼	\u223C	&#8764;	&sim;	%u223C	%E2%88%BC	tilde operator = varies with = similar to
+≅	\u2245	&#8773;	&cong;	%u2245	%E2%89%85	approximately equal to
+≈	\u2248	&#8776;	&asymp;	%u2248	%E2%89%88	almost equal to = asymptotic to
+≠	\u2260	&#8800;	&ne;	%u2260	%E2%89%A0	not equal to
+≡	\u2261	&#8801;	&equiv;	%u2261	%E2%89%A1	identical to
+≤	\u2264	&#8804;	&le;	%u2264	%E2%89%A4	less-than or equal to
+≥	\u2265	&#8805;	&ge;	%u2265	%E2%89%A5	greater-than or equal to
+⊂	\u2282	&#8834;	&sub;	%u2282	%E2%8A%82	subset of
+⊃	\u2283	&#8835;	&sup;	%u2283	%E2%8A%83	superset of
+⊄	\u2284	&#8836;	&nsub;	%u2284	%E2%8A%84	not a subset of
+⊆	\u2286	&#8838;	&sube;	%u2286	%E2%8A%86	subset of or equal to
+⊇	\u2287	&#8839;	&supe;	%u2287	%E2%8A%87	superset of or equal to
+⊕	\u2295	&#8853;	&oplus;	%u2295	%E2%8A%95	circled plus = direct sum
+⊗	\u2297	&#8855;	&otimes;	%u2297	%E2%8A%97	circled times = vector product
+⊥	\u22A5	&#8869;	&perp;	%u22A5	%E2%8A%A5	up tack = orthogonal to = perpendicular
+⋅	\u22C5	&#8901;	&sdot;	%u22C5	%E2%8B%85	dot operator
+⌈	\u2308	&#8968;	&lceil;	%u2308	%E2%8C%88	left ceiling = apl upstile
+⌉	\u2309	&#8969;	&rceil;	%u2309	%E2%8C%89	right ceiling
+⌊	\u230A	&#8970;	&lfloor;	%u230A	%E2%8C%8A	left floor = apl downstile
+⌋	\u230B	&#8971;	&rfloor;	%u230B	%E2%8C%8B	right floor
+⟨	\u2329	&#9001;	&lang;	%u2329	%E2%8C%A9	left-pointing angle bracket = bra
+⟩	\u232A	&#9002;	&rang;	%u232A	%E2%8C%AA	right-pointing angle bracket = ket
+◊	\u25CA	&#9674;	&loz;	%u25CA	%E2%97%8A	lozenge
+♠	\u2660	&#9824;	&spades;	%u2660	%E2%99%A0	black spade suit
+♣	\u2663	&#9827;	&clubs;	%u2663	%E2%99%A3	black club suit = shamrock
+♥	\u2665	&#9829;	&hearts;	%u2665	%E2%99%A5	black heart suit = valentine
+♦	\u2666	&#9830;	&diams;	%u2666	%E2%99%A6	black diamond suit
